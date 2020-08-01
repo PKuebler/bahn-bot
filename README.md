@@ -1,6 +1,15 @@
-# Bahn Bot [![Travis CI](https://api.travis-ci.org/PKuebler/bahn-bot.svg?branch=master&status=started)](https://travis-ci.org/github/PKuebler/bahn-bot)
+# Bahn Bot 
 
 German telegram bot as notification in case of train delays. It's use [marudor.de](https://marudor.de) as hafas api.
+
+
+![GitHub](https://img.shields.io/github/license/pkuebler/bahn-bot?style=for-the-badge)
+[![Travis (.org)](https://img.shields.io/travis/pkuebler/bahn-bot?style=for-the-badge)](https://travis-ci.org/github/PKuebler/bahn-bot)
+[![Docker Image Version (latest semver)](https://img.shields.io/docker/v/pkuebler/bahn-bot?style=for-the-badge)](https://hub.docker.com/repository/docker/pkuebler/bahn-bot)
+[![MicroBadger Layers](https://img.shields.io/microbadger/layers/pkuebler/bahn-bot?style=for-the-badge)](https://hub.docker.com/repository/docker/pkuebler/bahn-bot)
+[![Docker Image Size (tag)](https://img.shields.io/docker/image-size/pkuebler/bahn-bot/latest?style=for-the-badge)](https://hub.docker.com/repository/docker/pkuebler/bahn-bot)
+[![Docker Automated build](https://img.shields.io/docker/cloud/automated/pkuebler/bahn-bot?style=for-the-badge)](https://hub.docker.com/repository/docker/pkuebler/bahn-bot)
+[![Docker Build Status](https://img.shields.io/docker/cloud/build/pkuebler/bahn-bot?style=for-the-badge)](https://hub.docker.com/repository/docker/pkuebler/bahn-bot)
 
 ## Features
 
