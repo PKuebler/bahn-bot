@@ -1,4 +1,4 @@
-# Bahn Bot ![Travis CI](https://api.travis-ci.org/PKuebler/bahn-bot.svg?branch=master&status=started)
+# Bahn Bot [![Travis CI](https://api.travis-ci.org/PKuebler/bahn-bot.svg?branch=master&status=started)](https://travis-ci.org/github/PKuebler/bahn-bot)
 
 German telegram bot as notification in case of train delays. It's use [marudor.de](https://marudor.de) as hafas api.
 
