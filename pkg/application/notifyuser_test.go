@@ -3,7 +3,6 @@ package application
 import (
 	"context"
 	"errors"
-	"fmt"
 	"testing"
 	"time"
 
@@ -70,13 +69,10 @@ func TestNotifyUser(t *testing.T) {
 		}
 
 		isRunning := false
-		fmt.Println("===")
 		err = app.notifyUser(ctx, func(ctx context.Context, alarm *trainalarm.TrainAlarm, train marudor.HafasTrain, diff time.Duration) error {
 			isRunning = true
 
-			fmt.Println("????")
 			if !testCase.NotifySuccess {
-				fmt.Println("!!!!")
 				isRunning = false
 				return errors.New("notification failed")
 			}
