@@ -25,11 +25,48 @@ German telegram bot as notification in case of train delays. It's use [marudor.d
 
 ## Config
 
-> todo: config
+All parameters can be overwritten by ENV variable.
+
+```json
+// config.json
+{
+    "api": {
+        "endpoint": "https://marudor.de/api"
+    },
+    "telegram": {
+        "key": ""
+    },
+    "database": {
+        "dialect": "sqlite3",
+        "path": ":memory:"
+    },
+    "loglevel": "trace"
+}
+```
+
+- `API_ENDPOINT` marudor endpoint
+- `TELEGRAM_KEY` telegram bot key from [Telegram BotFahter](https://core.telegram.org/bots#6-botfather)
+- `DB_DIALECT` currently only `sqlite3`
+- `DB_PATH` database config path.
+    - sqlite3
+        - `:memory:` inmemory database
+        - `./path/to/databasefile` filebased
+- `LOG_LEVEL` loglevel `info`, `trace`, `warn` or `error` 
 
 ## Docker Setup
 
-> todo: docker-compose
+```yml
+version: '3'
+services:
+  bot:
+    image: "pkuebler/bahn-bot:latest"
+    environment:
+        - API_ENDPOINT=https://marudor.de/api
+        - TELEGRAM_KEY=
+        - DB_DIALECT=sqlite3
+        - "DB_PATH=:memory:"
+        - LOG_LEVEL=info
+```
 
 ## DSGVO
 
