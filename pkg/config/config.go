@@ -20,8 +20,8 @@ type TelegramConfig struct {
 
 // DatabaseConfig connection data
 type DatabaseConfig struct {
-	Dialect string `json:"dialect"`
-	Path    string `json:"path"`
+	Dialect string `env:"DB_DIALECT" json:"dialect"`
+	Path    string `env:"DB_PATH" json:"path"`
 }
 
 // Config contains the complete service configuration
