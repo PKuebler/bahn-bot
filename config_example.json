@@ -1,0 +1,13 @@
+{
+    "api": {
+        "endpoint": "https://marudor.de/api"
+    },
+    "telegram": {
+        "key": ""
+    },
+    "database": {
+        "dialect": "sqlite3",
+        "path": ":memory:"
+    },
+    "loglevel": "trace"
+}
