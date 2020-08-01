@@ -33,3 +33,7 @@ German telegram bot as notification in case of train delays. It's use [marudor.d
 - Add interface > telegram tests
 - Delete old chat states -> notify after delete
 - SQL Database Repository tests
+
+## License
+
+MIT
