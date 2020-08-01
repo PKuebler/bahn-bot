@@ -108,10 +108,8 @@ func TestGetTrainAlarmsSortByLastNotificationAt(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Len(t, alarms, 4)
 
-	assert.Equal(t, 2, alarms[0].GetStationEVA())
-	assert.Equal(t, 3, alarms[1].GetStationEVA())
-	assert.Equal(t, 1, alarms[2].GetStationEVA())
-	assert.Equal(t, 0, alarms[3].GetStationEVA())
+	assert.Equal(t, 2+3, alarms[0].GetStationEVA()+alarms[1].GetStationEVA())
+	assert.Equal(t, 0+1, alarms[2].GetStationEVA()+alarms[3].GetStationEVA())
 
 	alarms, err = db.GetTrainAlarmsSortByLastNotificationAt(ctx, 2)
 	assert.Nil(t, err)

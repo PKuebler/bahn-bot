@@ -26,7 +26,7 @@ func (t *TelegramService) SaveAlarm(ctx telegramconversation.TContext) telegramc
 		return ctx.SendWithState("Irgendetwas ist schief gelaufen. :/", "start")
 	}
 
-	log.Trace("Train %s, EVA %d, Date %d", trainName, stationEVA, stationDate)
+	log.Tracef("Train %s, EVA %d, Date %d", trainName, stationEVA, stationDate)
 
 	cmd := application.AddTrainAlarmCmd{
 		Identifyer:  ctx.ChatID(),
