@@ -4,7 +4,7 @@ before:
 builds:
 - env:
   - CGO_ENABLED=0
-- goos:
+  goos:
   - linux
   - windows
   - darwin
@@ -25,3 +25,7 @@ changelog:
     exclude:
     - '^docs:'
     - '^test:'
+release:
+  github:
+    owner: pkuebler
+    name: bahn-bot
