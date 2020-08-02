@@ -174,6 +174,31 @@ func TestUpdateTrainAlarm(t *testing.T) {
 	assert.NotNil(t, db.TrainAlarms[alarm.GetID()].GetLastNotificationAt())
 }
 
+func TestDeleteOldStates(t *testing.T) {
+	db := NewMemoryDatabase()
+	ctx := context.Background()
+
+	db.CurrentState = append(db.CurrentState, &MemoryStateModel{
+		Identifyer:    "true",
+		Plattform:     "telegram",
+		State:         "start",
+		StatePlayload: "",
+		UpdatedAt:     time.Now().AddDate(0, -1, 0),
+	})
+
+	db.CurrentState = append(db.CurrentState, &MemoryStateModel{
+		Identifyer:    "false",
+		Plattform:     "telegram",
+		State:         "start",
+		StatePlayload: "",
+		UpdatedAt:     time.Now(),
+	})
+
+	err := db.DeleteOldStates(ctx, time.Now().AddDate(0, 0, -2))
+	assert.Nil(t, err)
+	assert.Len(t, db.CurrentState, 0)
+}
+
 func createTestTrainAlarm(finalArrival time.Time) *trainalarm.TrainAlarm {
 	alarm, _ := trainalarm.NewTrainAlarm(
 		"identifyer",
