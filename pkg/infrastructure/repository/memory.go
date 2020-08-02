@@ -16,6 +16,7 @@ type MemoryStateModel struct {
 	Plattform     string
 	State         string
 	StatePlayload string
+	UpdatedAt     time.Time
 }
 
 // MemoryDatabase to test without persistence
@@ -228,6 +229,27 @@ func (m *MemoryDatabase) UpdateState(ctx context.Context, identifyer string, pla
 
 	state.State = newState
 	state.StatePlayload = newPayload
+	state.UpdatedAt = time.Now()
+
+	return nil
+}
+
+// DeleteOldStates returns NO error if nothing to do
+func (m *MemoryDatabase) DeleteOldStates(ctx context.Context, threshold time.Time) error {
+	m.Mutex.Lock()
+	defer m.Mutex.Unlock()
+
+	// clone list
+	b := make([]*MemoryStateModel, len(m.CurrentState))
+	copy(b, m.CurrentState)
+
+	for i, state := range b {
+		if state.UpdatedAt.Before(threshold) {
+			m.CurrentState[i] = m.CurrentState[len(m.CurrentState)-1]
+			m.CurrentState[len(m.CurrentState)-1] = nil
+			m.CurrentState = m.CurrentState[:len(m.CurrentState)-1]
+		}
+	}
 
 	return nil
 }

@@ -36,6 +36,7 @@ func (c *CronJob) Start(ctx context.Context) {
 
 	c.log.Info("start cronjob")
 
+	c.ClearDatabase(ctx)
 	go func() {
 		for {
 			select {
@@ -53,7 +54,9 @@ func (c *CronJob) Start(ctx context.Context) {
 
 // ClearDatabase delete old trainalarms from database
 func (c *CronJob) ClearDatabase(ctx context.Context) {
+	c.log.Info("Clear database...")
 	c.application.DeleteOldTrainAlarms(ctx)
+	c.application.DeleteOldStates(ctx)
 }
 
 // NotifyUsers about train delays

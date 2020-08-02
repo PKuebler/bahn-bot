@@ -248,6 +248,12 @@ func (s *SQLDatabase) UpdateState(ctx context.Context, identifyer string, plattf
 	return s.db.Save(model).Error
 }
 
+// DeleteOldStates returns NO error if nothing to do
+func (s *SQLDatabase) DeleteOldStates(ctx context.Context, threshold time.Time) error {
+	err := s.db.Where("updated_at < ?", threshold).Delete(SQLStateModel{}).Error
+	return err
+}
+
 // Close database
 func (s *SQLDatabase) Close() {
 	s.db.Close()

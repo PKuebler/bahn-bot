@@ -72,7 +72,7 @@ services:
 
 - Speichert:
     - ChatID + Zug für den Verspätungsalarm. Wird 2 Tage nach Ankunft des Zuges gelöscht (um Verspätungen abzufangen).
-    - ChatID + Aktuelle Operation mit Bot (z.B. newalarm, savealarm, ...)
+    - ChatID + Aktuelle Operation mit Bot (z.B. newalarm, savealarm, ...). Wird 4 Tage nach letzter Interaktion gelöscht.
 
 ## ToDo
 
