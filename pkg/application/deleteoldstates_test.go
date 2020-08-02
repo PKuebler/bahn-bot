@@ -13,4 +13,6 @@ func (a *Application) TestDeleteOldStates(t *testing.T) error {
 
 	err := app.DeleteOldStates(ctx)
 	assert.Nil(t, err)
+
+	return nil
 }

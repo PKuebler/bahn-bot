@@ -239,7 +239,11 @@ func (m *MemoryDatabase) DeleteOldStates(ctx context.Context, threshold time.Tim
 	m.Mutex.Lock()
 	defer m.Mutex.Unlock()
 
-	for i, state := range m.CurrentState {
+	// clone list
+	b := make([]*MemoryStateModel, len(m.CurrentState))
+	copy(b, m.CurrentState)
+
+	for i, state := range b {
 		if state.UpdatedAt.Before(threshold) {
 			m.CurrentState[i] = m.CurrentState[len(m.CurrentState)-1]
 			m.CurrentState[len(m.CurrentState)-1] = nil

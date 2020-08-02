@@ -196,7 +196,7 @@ func TestDeleteOldStates(t *testing.T) {
 
 	err := db.DeleteOldStates(ctx, time.Now().AddDate(0, 0, -2))
 	assert.Nil(t, err)
-	assert.Len(t, db.CurrentState, 0)
+	assert.Len(t, db.CurrentState, 1)
 }
 
 func createTestTrainAlarm(finalArrival time.Time) *trainalarm.TrainAlarm {
