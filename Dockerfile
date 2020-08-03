@@ -4,6 +4,8 @@ FROM golang:1.14 as build
 WORKDIR /go/src/app
 ADD . /go/src/app
 
+ARG CGO_ENABLED=1
+
 RUN go get -d -v ./...
 
 RUN go build -o /go/bin/bahn-bot
