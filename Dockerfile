@@ -6,9 +6,9 @@ ADD . /go/src/app
 
 RUN go get -d -v ./...
 
-RUN go build -o /go/bin/bahn-bot",
-"
+RUN go build -o /go/bin/bahn-bot
+
 # Now copy it into our base image.
 FROM gcr.io/distroless/base
-COPY --from=build /go/bin/bahn-bot", "/
+COPY --from=build /go/bin/bahn-bot /
 CMD ["/bahn-bot", "bot"]
