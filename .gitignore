@@ -1,5 +1,6 @@
 config.json
 /dist/
+/data/
 
 # Created by https://www.toptal.com/developers/gitignore/api/go,windows,linux,osx,visualstudiocode,visualstudio,sublimetext
 # Edit at https://www.toptal.com/developers/gitignore?templates=go,windows,linux,osx,visualstudiocode,visualstudio,sublimetext

@@ -1,0 +1,7 @@
+version: '3'
+services:
+  bot:
+    build: .
+    volumes:
+      - "./data:/data"
+      - "./config.json:/config.json"
