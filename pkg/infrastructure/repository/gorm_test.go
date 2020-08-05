@@ -216,7 +216,7 @@ func TestSQLUpdateTrainAlarm(t *testing.T) {
 
 	// not found
 	notRunning := true
-	err := db.UpdateTrainAlarm(ctx, alarm.GetID(), func(alarm *trainalarm.TrainAlarm) (*trainalarm.TrainAlarm, error) {
+	err = db.UpdateTrainAlarm(ctx, alarm.GetID(), func(alarm *trainalarm.TrainAlarm) (*trainalarm.TrainAlarm, error) {
 		notRunning = false
 		return nil, nil
 	})
