@@ -190,7 +190,7 @@ func TestSQLDeleteTrainAlarm(t *testing.T) {
 
 	// not found
 	err = db.DeleteTrainAlarm(ctx, alarm.GetID())
-	assert.NotNil(t, err)
+	assert.Nil(t, err)
 
 	// delete
 	err = db.db.Create(NewSQLTrainAlarmModel(alarm)).Error
@@ -234,6 +234,9 @@ func TestSQLUpdateTrainAlarm(t *testing.T) {
 	})
 	assert.True(t, running)
 	assert.NotNil(t, err)
+
+	err = db.db.Delete(SQLTrainAlarmModel{}).Error
+	assert.Nil(t, err)
 
 	var dbAlarm SQLTrainAlarmModel
 	err = db.db.Where("id = ?", alarm.GetID()).First(&dbAlarm).Error
