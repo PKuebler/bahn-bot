@@ -101,7 +101,7 @@ func TestSQLGetTrainAlarm(t *testing.T) {
 	assert.Nil(t, alarm)
 
 	// founded
-	err = db.db.Create(query).Error
+	err = db.db.Create(NewSQLTrainAlarmModel(query)).Error
 	assert.Nil(t, err)
 
 	alarm, err = db.GetTrainAlarm(ctx, query.GetID())
@@ -127,7 +127,7 @@ func TestSQLGetTrainAlarms(t *testing.T) {
 			alarm.SetSuccessfulNotification()
 		}
 
-		err = db.db.Create(alarm).Error
+		err = db.db.Create(NewSQLTrainAlarmModel(alarm)).Error
 		assert.Nil(t, err)
 	}
 
@@ -154,7 +154,7 @@ func TestSQLGetTrainAlarmsSortByLastNotificationAt(t *testing.T) {
 			alarm.SetSuccessfulNotification()
 		}
 
-		err = db.db.Create(alarm).Error
+		err = db.db.Create(NewSQLTrainAlarmModel(alarm)).Error
 		assert.Nil(t, err)
 	}
 
