@@ -37,8 +37,8 @@ All parameters can be overwritten by ENV variable.
         "key": ""
     },
     "database": {
-        "dialect": "sqlite3",
-        "path": ":memory:"
+        "dialect": "postgres",
+        "path": "host=myhost port=myport user=gorm dbname=gorm password=mypassword"
     },
     "loglevel": "trace"
 }
@@ -46,11 +46,12 @@ All parameters can be overwritten by ENV variable.
 
 - `API_ENDPOINT` marudor endpoint
 - `TELEGRAM_KEY` telegram bot key from [Telegram BotFahter](https://core.telegram.org/bots#6-botfather)
-- `DB_DIALECT` currently only `sqlite3`
+- `DB_DIALECT` currently only `mysql` or `postgres`
 - `DB_PATH` database config path.
-    - sqlite3
-        - `:memory:` inmemory database
-        - `./path/to/databasefile` filebased
+    - mysql
+        - `user:password@/dbname?charset=utf8&parseTime=True&loc=Local`
+    - postgres
+        - `sslmode=disable host=myhost port=myport user=gorm dbname=gorm password=mypassword`
 - `LOG_LEVEL` loglevel `info`, `trace`, `warn` or `error` 
 
 ## Docker Setup
@@ -63,8 +64,8 @@ services:
     environment:
         - API_ENDPOINT=https://marudor.de/api
         - TELEGRAM_KEY=
-        - DB_DIALECT=sqlite3
-        - "DB_PATH=:memory:"
+        - DB_DIALECT=mysql
+        - "DB_PATH=user:password@/dbname?charset=utf8&parseTime=True&loc=Local"
         - LOG_LEVEL=info
 ```
 
@@ -77,7 +78,6 @@ services:
 ## ToDo
 
 - Add interface > telegram tests
-- Delete old chat states -> notify after delete
 - SQL Database Repository tests
 
 ## License

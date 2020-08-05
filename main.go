@@ -3,7 +3,8 @@ package main
 import (
 	"context"
 
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 
 	"github.com/pkuebler/bahn-bot/cmd"
 )

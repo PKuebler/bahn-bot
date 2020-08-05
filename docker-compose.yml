@@ -3,5 +3,28 @@ services:
   bot:
     build: .
     volumes:
-      - "./data:/data"
       - "./config.json:/config.json"
+    restart: always
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=bahn-bot
+      - POSTGRES_PASSWORD=supersecretpassword
+      - POSTGRES_DB=bahn-bot
+    volumes:
+      - ./data:/var/lib/postgresql/data
+
+  # mysql:
+  #   image: mysql:5.7
+  #   container_name: mysql
+  #   environment:
+  #     - MYSQL_USER=bahn-bot
+  #     - MYSQL_PASSWORD=supersecretpassword
+  #     - MYSQL_DATABASE=bahn-bot
+  #     - MYSQL_ROOT_PASSWORD=supersecretpassword
+  #   volumes:
+  #     - ./data:/var/lib/mysql
