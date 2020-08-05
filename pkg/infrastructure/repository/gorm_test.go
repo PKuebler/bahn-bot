@@ -67,6 +67,8 @@ func TestSQLGetOrCreateTrainAlarm(t *testing.T) {
 	db := NewSQLDatabase(os.Getenv("DB_DIALECT"), os.Getenv("DB_PATH"))
 	assert.NotNil(t, db)
 	defer db.Close()
+	err := db.db.Delete(SQLTrainAlarmModel{}).Error
+	assert.Nil(t, err)
 
 	query := createTestTrainAlarm(time.Now())
 
@@ -92,6 +94,8 @@ func TestSQLGetTrainAlarm(t *testing.T) {
 	db := NewSQLDatabase(os.Getenv("DB_DIALECT"), os.Getenv("DB_PATH"))
 	assert.NotNil(t, db)
 	defer db.Close()
+	err := db.db.Delete(SQLTrainAlarmModel{}).Error
+	assert.Nil(t, err)
 
 	query := createTestTrainAlarm(time.Now())
 
@@ -114,6 +118,8 @@ func TestSQLGetTrainAlarms(t *testing.T) {
 	db := NewSQLDatabase(os.Getenv("DB_DIALECT"), os.Getenv("DB_PATH"))
 	assert.NotNil(t, db)
 	defer db.Close()
+	err := db.db.Delete(SQLTrainAlarmModel{}).Error
+	assert.Nil(t, err)
 
 	// empty database
 	alarms, err := db.GetTrainAlarms(ctx, "1234", "telegram")
@@ -141,6 +147,8 @@ func TestSQLGetTrainAlarmsSortByLastNotificationAt(t *testing.T) {
 	db := NewSQLDatabase(os.Getenv("DB_DIALECT"), os.Getenv("DB_PATH"))
 	assert.NotNil(t, db)
 	defer db.Close()
+	err := db.db.Delete(SQLTrainAlarmModel{}).Error
+	assert.Nil(t, err)
 
 	// empty database
 	alarms, err := db.GetTrainAlarmsSortByLastNotificationAt(ctx, 20)
@@ -175,15 +183,17 @@ func TestSQLDeleteTrainAlarm(t *testing.T) {
 	db := NewSQLDatabase(os.Getenv("DB_DIALECT"), os.Getenv("DB_PATH"))
 	assert.NotNil(t, db)
 	defer db.Close()
+	err := db.db.Delete(SQLTrainAlarmModel{}).Error
+	assert.Nil(t, err)
 
 	alarm := createTestTrainAlarm(time.Now())
 
 	// not found
-	err := db.DeleteTrainAlarm(ctx, alarm.GetID())
+	err = db.DeleteTrainAlarm(ctx, alarm.GetID())
 	assert.NotNil(t, err)
 
 	// delete
-	err = db.db.Create(alarm).Error
+	err = db.db.Create(NewSQLTrainAlarmModel(alarm)).Error
 	assert.Nil(t, err)
 
 	err = db.DeleteTrainAlarm(ctx, alarm.GetID())
@@ -199,6 +209,8 @@ func TestSQLUpdateTrainAlarm(t *testing.T) {
 	db := NewSQLDatabase(os.Getenv("DB_DIALECT"), os.Getenv("DB_PATH"))
 	assert.NotNil(t, db)
 	defer db.Close()
+	err := db.db.Delete(SQLTrainAlarmModel{}).Error
+	assert.Nil(t, err)
 
 	alarm := createTestTrainAlarm(time.Now())
 
@@ -212,7 +224,7 @@ func TestSQLUpdateTrainAlarm(t *testing.T) {
 	assert.NotNil(t, err)
 
 	// update with error
-	err = db.db.Create(alarm).Error
+	err = db.db.Create(NewSQLTrainAlarmModel(alarm)).Error
 	assert.Nil(t, err)
 
 	running := false
@@ -229,7 +241,7 @@ func TestSQLUpdateTrainAlarm(t *testing.T) {
 	assert.Equal(t, alarm.GetID(), dbAlarm.ID)
 
 	// update
-	err = db.db.Create(alarm).Error
+	err = db.db.Create(NewSQLTrainAlarmModel(alarm)).Error
 	assert.Nil(t, err)
 
 	running = false
