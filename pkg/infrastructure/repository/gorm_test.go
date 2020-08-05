@@ -235,13 +235,13 @@ func TestSQLUpdateTrainAlarm(t *testing.T) {
 	assert.True(t, running)
 	assert.NotNil(t, err)
 
-	err = db.db.Delete(SQLTrainAlarmModel{}).Error
-	assert.Nil(t, err)
-
 	var dbAlarm SQLTrainAlarmModel
 	err = db.db.Where("id = ?", alarm.GetID()).First(&dbAlarm).Error
 	assert.Nil(t, err)
 	assert.Equal(t, alarm.GetID(), dbAlarm.ID)
+
+	err = db.db.Delete(SQLTrainAlarmModel{}).Error
+	assert.Nil(t, err)
 
 	// update
 	err = db.db.Create(NewSQLTrainAlarmModel(alarm)).Error
@@ -259,5 +259,5 @@ func TestSQLUpdateTrainAlarm(t *testing.T) {
 	err = db.db.Where("id = ?", alarm.GetID()).First(&dbAlarm).Error
 	assert.Nil(t, err)
 	assert.Equal(t, alarm.GetID(), dbAlarm.ID)
-	assert.NotNil(t, alarm.GetLastNotificationAt())
+	assert.NotNil(t, dbAlarm.TrainAlarm().GetLastNotificationAt())
 }
