@@ -8,6 +8,8 @@ import (
 	"testing"
 	"time"
 
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/pkuebler/bahn-bot/pkg/domain/trainalarm"
