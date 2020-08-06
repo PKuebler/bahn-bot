@@ -6,8 +6,8 @@
         "key": ""
     },
     "database": {
-        "dialect": "sqlite3",
-        "path": ":memory:"
+        "dialect": "postgres",
+        "path": "host=postgres port=myport user=bahn-bot dbname=bahn-bot password=supersecretpassword sslmode=disable"
     },
     "loglevel": "trace"
 }

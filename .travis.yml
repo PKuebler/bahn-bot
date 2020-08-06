@@ -8,9 +8,16 @@ go:
   - master
 
 env:
-  - GO111MODULE=on CGO_ENABLED=1
+  - GO111MODULE=on CGO_ENABLED=0 DB_DIALECT=postgres DB_PATH='host=localhost port=5432 user=postgres dbname=travis_ci_test sslmode=disable password='
+
+services:
+  - postgresql
+
+before_script:
+  - psql -c 'create database travis_ci_test;' -U postgres
 
 script:
+  - go mod download
   - go test ./... # replace this with your test script
   - curl -sfL https://git.io/goreleaser | sh -s -- check # check goreleaser config for deprecations
 
