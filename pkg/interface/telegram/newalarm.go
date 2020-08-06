@@ -7,5 +7,10 @@ func (t *TelegramService) NewAlarm(ctx telegramconversation.TContext) telegramco
 	log := ctx.LogFields(t.log)
 	log.Trace("NewAlarm()")
 
+	if ctx.CommandQuery() != "" {
+		ctx.SetMessage(ctx.CommandQuery())
+		return t.NewAlarmSelect(ctx)
+	}
+
 	return ctx.SendWithState("Welcher Zug soll überwacht werden?", "newalarmselect")
 }
