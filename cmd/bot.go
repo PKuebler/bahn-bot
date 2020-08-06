@@ -170,11 +170,17 @@ func BotCommand(ctx context.Context, cmd *cobra.Command, args []string) {
 				}
 
 				if tctx.IsKeyboard() {
-					buttons := []tgbotapi.InlineKeyboardButton{}
+					buttons := [][]tgbotapi.InlineKeyboardButton{}
 					for _, button := range tctx.Keyboard() {
-						buttons = append(buttons, tgbotapi.NewInlineKeyboardButtonData(button.Label, button.Data))
+						buttons = append(
+							buttons,
+							tgbotapi.NewInlineKeyboardRow(
+								tgbotapi.NewInlineKeyboardButtonData(button.Label, button.Data),
+							),
+						)
+						//						buttons = append(buttons, tgbotapi.NewInlineKeyboardButtonData(button.Label, button.Data))
 					}
-					keyboard := tgbotapi.NewInlineKeyboardMarkup(buttons)
+					keyboard := tgbotapi.NewInlineKeyboardMarkup(buttons...)
 					reply.ReplyMarkup = keyboard
 				}
 
