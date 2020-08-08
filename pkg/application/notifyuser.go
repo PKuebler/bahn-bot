@@ -54,11 +54,11 @@ func (a *Application) notifyUser(ctx context.Context, notifyFn func(ctx context.
 		var currentTime time.Time
 
 		if train.CurrentStop.Arrival != nil {
-			scheduledTime = time.Unix(0, train.CurrentStop.Arrival.ScheduledTime*int64(time.Millisecond))
-			currentTime = time.Unix(0, train.CurrentStop.Arrival.Time*int64(time.Millisecond))
+			scheduledTime = train.CurrentStop.Arrival.GoScheduledTime()
+			currentTime = train.CurrentStop.Arrival.GoTime()
 		} else if train.CurrentStop.Departure != nil {
-			scheduledTime = time.Unix(0, train.CurrentStop.Departure.ScheduledTime*int64(time.Millisecond))
-			currentTime = time.Unix(0, train.CurrentStop.Departure.Time*int64(time.Millisecond))
+			scheduledTime = train.CurrentStop.Departure.GoScheduledTime()
+			currentTime = train.CurrentStop.Departure.GoTime()
 		} else {
 			log.Trace("current stop arrival and departure empty")
 			t.SetSuccessfulNotification()

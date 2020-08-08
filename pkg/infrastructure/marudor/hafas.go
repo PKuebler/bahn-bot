@@ -99,6 +99,26 @@ type HafasTrainResult struct {
 	Stops     []HafasStop    `json:"stops"`
 }
 
+// GoScheduledTime returns hafas timestamp as golang time
+func (h *HafasArrival) GoScheduledTime() time.Time {
+	return time.Unix(0, h.ScheduledTime*int64(time.Millisecond))
+}
+
+// GoTime returns hafas timestamp as golang time
+func (h *HafasArrival) GoTime() time.Time {
+	return time.Unix(0, h.Time*int64(time.Millisecond))
+}
+
+// GoScheduledTime returns hafas timestamp as golang time
+func (h *HafasDeparture) GoScheduledTime() time.Time {
+	return time.Unix(0, h.ScheduledTime*int64(time.Millisecond))
+}
+
+// GoTime returns hafas timestamp as golang time
+func (h *HafasDeparture) GoTime() time.Time {
+	return time.Unix(0, h.Time*int64(time.Millisecond))
+}
+
 // FindTrain by name and date
 func (h *HafasService) FindTrain(ctx context.Context, trainName string, date time.Time) (*[]HafasTrainResult, error) {
 	path := "hafas/v1/enrichedJourneyMatch"

@@ -27,14 +27,26 @@ func (a *Application) AddTrainAlarm(ctx context.Context, cmd AddTrainAlarmCmd) e
 	})
 
 	// search train by marudor
-	_, err := a.hafas.GetTrainByStation(ctx, cmd.TrainName, cmd.StationEVA, cmd.StationDate)
+	train, err := a.hafas.GetTrainByStation(ctx, cmd.TrainName, cmd.StationEVA, cmd.StationDate)
 	if err != nil {
 		log.Error(err)
 		return errors.New("not found")
 	}
 
 	// create train alarm with final arrival
-	finalArrival := time.Now().AddDate(0, 0, -3) // todo: use train
+	finalArrival := time.Now()
+	if train.Arrival != nil {
+		// time
+		finalArrival = train.Arrival.GoTime()
+	} else if len(train.Stops) > 0 {
+		// search stops
+		for _, stop := range train.Stops {
+			if stop.Arrival != nil && finalArrival.Before(stop.Arrival.GoTime()) {
+				finalArrival = stop.Arrival.GoTime()
+			}
+		}
+	}
+
 	alarm, err := trainalarm.NewTrainAlarm(
 		cmd.Identifyer,
 		cmd.Plattform,
