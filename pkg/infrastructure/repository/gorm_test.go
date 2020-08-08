@@ -23,7 +23,7 @@ func TestNewSQLDatabase(t *testing.T) {
 }
 
 func TestConvertModel(t *testing.T) {
-	alarm, err := trainalarm.NewTrainAlarm("mychatID", "telegram", "ICE 7", 123456, 1234567890, time.Now())
+	alarm, err := trainalarm.NewTrainAlarm("mychatID", "telegram", "ICE 7", 123456, 1234567890, time.Now(), "Berlin Ostbahnhof")
 	assert.NotNil(t, alarm)
 	assert.Nil(t, err)
 
@@ -127,7 +127,7 @@ func TestSQLGetTrainAlarms(t *testing.T) {
 	assert.Len(t, alarms, 0)
 
 	for i := 0; i < 4; i++ {
-		alarm, err := trainalarm.NewTrainAlarm("1234", "telegram", fmt.Sprintf("ice %d", i), i, int64(i), time.Now())
+		alarm, err := trainalarm.NewTrainAlarm("1234", "telegram", fmt.Sprintf("ice %d", i), i, int64(i), time.Now(), "Berlin Ostbahnhof")
 		assert.Nil(t, err)
 		if i > 1 {
 			alarm.SetSuccessfulNotification()
@@ -156,7 +156,7 @@ func TestSQLGetTrainAlarmsSortByLastNotificationAt(t *testing.T) {
 	assert.Len(t, alarms, 0)
 
 	for i := 0; i < 4; i++ {
-		alarm, err := trainalarm.NewTrainAlarm("identifyer", "telegram", fmt.Sprintf("ice %d", i), i, int64(i), time.Now())
+		alarm, err := trainalarm.NewTrainAlarm("identifyer", "telegram", fmt.Sprintf("ice %d", i), i, int64(i), time.Now(), "Berlin Ostbahnhof")
 		assert.Nil(t, err)
 		if i > 1 {
 			alarm.SetSuccessfulNotification()

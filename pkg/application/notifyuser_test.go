@@ -59,6 +59,7 @@ func TestNotifyUser(t *testing.T) {
 			8503000,
 			int64(1595797980000),
 			time.Now(),
+			"Berlin Ostbahnhof",
 		)
 		alarm.SetLastDelay(-100)
 		assert.Nil(t, err, testCase.Description)
@@ -103,6 +104,7 @@ func TestNotifyUsers(t *testing.T) {
 			8503000,
 			int64(1595797980000),
 			time.Now(),
+			"Berlin Ostbahnhof",
 		)
 		assert.Nil(t, err)
 		assert.NotNil(t, alarm)

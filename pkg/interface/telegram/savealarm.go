@@ -42,6 +42,6 @@ func (t *TelegramService) SaveAlarm(ctx telegramconversation.TContext) telegramc
 		return ctx.SendWithState("Irgendetwas ist schief gelaufen. :/", "start")
 	}
 
-	txt := fmt.Sprintf("Neuer Alarm %s hinzugefügt. Über /myalarms kann die erlaubte Abweichung geändert werden.", trainName)
+	txt := fmt.Sprintf("Neuer Alarm `%s` hinzugefügt. Über /myalarms kann die erlaubte Abweichung geändert werden.", trainName)
 	return ctx.SendWithState(txt, "start")
 }

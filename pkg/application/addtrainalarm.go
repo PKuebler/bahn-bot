@@ -54,6 +54,7 @@ func (a *Application) AddTrainAlarm(ctx context.Context, cmd AddTrainAlarmCmd) e
 		cmd.StationEVA,
 		cmd.StationDate,
 		finalArrival,
+		train.FinalDestination,
 	)
 
 	_, err = a.repo.GetOrCreateTrainAlarm(ctx, alarm)

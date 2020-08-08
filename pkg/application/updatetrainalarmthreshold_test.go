@@ -22,6 +22,7 @@ func TestUpdateTrainAlarmThreshold(t *testing.T) {
 		8503000,
 		int64(1595797980000),
 		time.Now(),
+		"Berlin Ostbahnhof",
 	)
 	assert.Nil(t, err)
 	assert.NotNil(t, alarm)
