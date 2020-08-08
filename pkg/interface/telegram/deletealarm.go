@@ -24,5 +24,5 @@ func (t *TelegramService) DeleteAlarm(ctx telegramconversation.TContext) telegra
 	}
 	alarm, _ := t.application.DeleteTrainAlarm(context.Background(), cmd)
 
-	return ctx.SendWithState(fmt.Sprintf("Alarm %s gelöscht.", alarm.GetTrainName()), "start")
+	return ctx.SendWithState(fmt.Sprintf("Alarm `%s > %s` gelöscht.", alarm.GetTrainName(), alarm.GetFinalDestinationName()), "start")
 }

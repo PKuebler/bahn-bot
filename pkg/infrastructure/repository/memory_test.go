@@ -73,7 +73,7 @@ func TestGetTrainAlarms(t *testing.T) {
 	assert.Len(t, alarms, 0)
 
 	for i := 0; i < 4; i++ {
-		alarm, err := trainalarm.NewTrainAlarm("1234", "telegram", fmt.Sprintf("ice %d", i), i, int64(i), time.Now())
+		alarm, err := trainalarm.NewTrainAlarm("1234", "telegram", fmt.Sprintf("ice %d", i), i, int64(i), time.Now(), "Berlin Ostbahnhof")
 		assert.Nil(t, err)
 		if i > 1 {
 			alarm.SetSuccessfulNotification()
@@ -96,7 +96,7 @@ func TestGetTrainAlarmsSortByLastNotificationAt(t *testing.T) {
 	assert.Len(t, alarms, 0)
 
 	for i := 0; i < 4; i++ {
-		alarm, err := trainalarm.NewTrainAlarm("identifyer", "telegram", fmt.Sprintf("ice %d", i), i, int64(i), time.Now())
+		alarm, err := trainalarm.NewTrainAlarm("identifyer", "telegram", fmt.Sprintf("ice %d", i), i, int64(i), time.Now(), "Berlin Ostbahnhof")
 		assert.Nil(t, err)
 		if i > 1 {
 			alarm.SetSuccessfulNotification()
@@ -207,6 +207,7 @@ func createTestTrainAlarm(finalArrival time.Time) *trainalarm.TrainAlarm {
 		11111111,
 		int64(12432342342334234),
 		finalArrival,
+		"Berlin Ostbahnhof",
 	)
 	return alarm
 }

@@ -25,7 +25,7 @@ func (t *TelegramService) AlarmMenu(ctx telegramconversation.TContext) telegramc
 		return ctx.SendWithState("Alarm nicht gefunden.", "start")
 	}
 
-	txt := fmt.Sprintf("Was möchtest du für %s (Alarm ab %dm) ändern?", alarm.GetTrainName(), alarm.GetDelayThresholdMinutes())
+	txt := fmt.Sprintf("Was möchtest du für `%s > %s` (Alarm ab `%dm`) ändern?", alarm.GetTrainName(), alarm.GetFinalDestinationName(), alarm.GetDelayThresholdMinutes())
 	buttons := []telegramconversation.TButton{
 		telegramconversation.NewTButton("Alarm ab ...", fmt.Sprintf("editdelay|%s", alarm.GetID())),
 		telegramconversation.NewTButton("Löschen", fmt.Sprintf("deletealarm|%s", alarm.GetID())),

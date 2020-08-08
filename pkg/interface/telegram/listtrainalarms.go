@@ -33,7 +33,8 @@ func (t *TelegramService) ListTrainAlarms(ctx telegramconversation.TContext) tel
 	txt := "Welcher Alarm soll bearbeitet werden?"
 	buttons := []telegramconversation.TButton{}
 	for _, alarm := range alarms {
-		button := telegramconversation.NewTButton(alarm.GetTrainName(), fmt.Sprintf("alarm|%s", alarm.GetID()))
+		trainName := fmt.Sprintf("%s > %s", alarm.GetTrainName(), alarm.GetFinalDestinationName())
+		button := telegramconversation.NewTButton(trainName, fmt.Sprintf("alarm|%s", alarm.GetID()))
 		buttons = append(buttons, button)
 	}
 	buttons = append(buttons, telegramconversation.NewTButton("Abbruch", "cancel"))

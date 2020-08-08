@@ -15,6 +15,7 @@ type TrainAlarm struct {
 	stationEVA            int
 	stationDate           int64
 	finalArrivalAt        time.Time
+	finalDestinationName  string
 	delayThresholdMinutes int
 	lastNotificationAt    *time.Time
 	lastDelayMinutes      int
@@ -28,6 +29,7 @@ func NewTrainAlarm(
 	stationEVA int,
 	stationDate int64,
 	finalArrivalAt time.Time,
+	finalDestinationName string,
 ) (*TrainAlarm, error) {
 	return &TrainAlarm{
 		id:                    uuid.New().String(),
@@ -37,6 +39,7 @@ func NewTrainAlarm(
 		stationEVA:            stationEVA,
 		stationDate:           stationDate,
 		finalArrivalAt:        finalArrivalAt,
+		finalDestinationName:  finalDestinationName,
 		delayThresholdMinutes: 0,
 		lastDelayMinutes:      0,
 	}, nil
@@ -51,6 +54,7 @@ func NewTrainAlarmFromRepository(
 	stationEVA int,
 	stationDate int64,
 	finalArrivalAt time.Time,
+	finalDestinationName string,
 	delayThresholdMinutes int,
 	lastNotificationAt *time.Time,
 	lastDelayMinutes int,
@@ -63,6 +67,7 @@ func NewTrainAlarmFromRepository(
 		stationEVA:            stationEVA,
 		stationDate:           stationDate,
 		finalArrivalAt:        finalArrivalAt,
+		finalDestinationName:  finalDestinationName,
 		delayThresholdMinutes: delayThresholdMinutes,
 		lastNotificationAt:    lastNotificationAt,
 		lastDelayMinutes:      lastDelayMinutes,
@@ -108,6 +113,11 @@ func (t *TrainAlarm) GetStationDate() int64 {
 // GetFinalArrivalAt from train
 func (t *TrainAlarm) GetFinalArrivalAt() time.Time {
 	return t.finalArrivalAt
+}
+
+// GetFinalDestinationName from train
+func (t *TrainAlarm) GetFinalDestinationName() string {
+	return t.finalDestinationName
 }
 
 // GetLastNotificationAt returns nil if no notification is send yet

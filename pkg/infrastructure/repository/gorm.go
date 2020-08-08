@@ -37,6 +37,7 @@ type SQLTrainAlarmModel struct {
 	StationEVA            int
 	StationDate           int64
 	FinalArrivalAt        time.Time
+	FinalDestinationName  string
 	DelayThresholdMinutes int
 	LastNotificationAt    *time.Time
 	LastDelayMinutes      int
@@ -54,6 +55,7 @@ func NewSQLTrainAlarmModel(alarm *trainalarm.TrainAlarm) *SQLTrainAlarmModel {
 		StationEVA:            alarm.GetStationEVA(),
 		StationDate:           alarm.GetStationDate(),
 		FinalArrivalAt:        alarm.GetFinalArrivalAt(),
+		FinalDestinationName:  alarm.GetFinalDestinationName(),
 		DelayThresholdMinutes: alarm.GetDelayThresholdMinutes(),
 		LastNotificationAt:    alarm.GetLastNotificationAt(),
 		LastDelayMinutes:      alarm.GetLastDelay(),
@@ -70,6 +72,7 @@ func (s *SQLTrainAlarmModel) TrainAlarm() *trainalarm.TrainAlarm {
 		s.StationEVA,
 		s.StationDate,
 		s.FinalArrivalAt,
+		s.FinalDestinationName,
 		s.DelayThresholdMinutes,
 		s.LastNotificationAt,
 		s.LastDelayMinutes,

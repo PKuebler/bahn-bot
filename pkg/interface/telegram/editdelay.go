@@ -30,5 +30,5 @@ func (t *TelegramService) EditDelay(ctx telegramconversation.TContext) telegramc
 	}
 
 	ctx.SetStatePayload(alarm.GetID())
-	return ctx.SendWithState(fmt.Sprintf("Ab wie viel Abweichung von %s soll bescheid gesagt werden? z.B. 1h5min oder 10m", alarm.GetTrainName()), "savedelay")
+	return ctx.SendWithState(fmt.Sprintf("Ab wie viel Abweichung von `%s > %s` soll bescheid gesagt werden? z.B. 1h5min oder 10m", alarm.GetTrainName(), alarm.GetFinalDestinationName()), "savedelay")
 }

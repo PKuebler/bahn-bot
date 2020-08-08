@@ -23,7 +23,8 @@ func (t *TelegramService) NewAlarmSelect(ctx telegramconversation.TContext) tele
 
 	buttons := []telegramconversation.TButton{}
 	for _, train := range *results {
-		button := telegramconversation.NewTButton(train.Train.Name, fmt.Sprintf("savealarm|%s %s|%s|%d", train.Train.Type, train.Train.Number, train.FirstStop.Station.ID, train.FirstStop.Departure.ScheduledTime))
+		trainName := fmt.Sprintf("%s > %s", train.Train.Name, train.LastStop.Station.Title)
+		button := telegramconversation.NewTButton(trainName, fmt.Sprintf("savealarm|%s %s|%s|%d", train.Train.Type, train.Train.Number, train.FirstStop.Station.ID, train.FirstStop.Departure.ScheduledTime))
 		buttons = append(buttons, button)
 	}
 	buttons = append(buttons, telegramconversation.NewTButton("Abbruch", "cancel"))

@@ -64,7 +64,7 @@ func (c *CronJob) NotifyUsers(ctx context.Context) {
 	c.application.NotifyUsers(ctx, func(ctx context.Context, alarm *trainalarm.TrainAlarm, train marudor.HafasTrain, diff time.Duration) error {
 		tctx := telegramconversation.NewTContext(alarm.GetIdentifyer())
 
-		txt := fmt.Sprintf("Zug %s hat %s Verspätung.", alarm.GetTrainName(), diff.String())
+		txt := fmt.Sprintf("Zug %s hat `%s` Verspätung.", alarm.GetTrainName(), diff.String())
 
 		tctx.Send(txt)
 
