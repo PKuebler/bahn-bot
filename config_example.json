@@ -9,5 +9,6 @@
         "dialect": "postgres",
         "path": "host=postgres port=myport user=bahn-bot dbname=bahn-bot password=supersecretpassword sslmode=disable"
     },
-    "loglevel": "trace"
+    "loglevel": "trace",
+    "enable_metrics": true
 }
