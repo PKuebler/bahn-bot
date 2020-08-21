@@ -40,7 +40,8 @@ All parameters can be overwritten by ENV variable.
         "dialect": "postgres",
         "path": "host=myhost port=myport user=gorm dbname=gorm password=mypassword"
     },
-    "loglevel": "trace"
+    "loglevel": "trace",
+    "metrics": false
 }
 ```
 
@@ -69,11 +70,16 @@ services:
         - LOG_LEVEL=info
 ```
 
+## Prometheus Endpoint
+
+The Prometheus endpoint is located under `:8080/metrics` when `metrics` is enabled in the Config.
+
 ## DSGVO
 
 - Speichert:
     - ChatID + Zug für den Verspätungsalarm. Wird 2 Tage nach Ankunft des Zuges gelöscht (um Verspätungen abzufangen).
     - ChatID + Aktuelle Operation mit Bot (z.B. newalarm, savealarm, ...). Wird 4 Tage nach letzter Interaktion gelöscht.
+    - Metrics erfassen verwendung von Zugnummern ohne Verknüpfungen zu Personen.
 
 ## ToDo
 
