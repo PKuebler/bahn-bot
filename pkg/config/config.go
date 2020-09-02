@@ -26,10 +26,11 @@ type DatabaseConfig struct {
 
 // Config contains the complete service configuration
 type Config struct {
-	APIConfig APIConfig      `json:"api"`
-	Database  DatabaseConfig `json:"database"`
-	Telegram  TelegramConfig `json:"telegram"`
-	LogLevel  string         `env:"LOG_LEVEL" json:"loglevel"`
+	APIConfig     APIConfig      `json:"api"`
+	Database      DatabaseConfig `json:"database"`
+	Telegram      TelegramConfig `json:"telegram"`
+	LogLevel      string         `env:"LOG_LEVEL" json:"loglevel"`
+	EnableMetrics bool           `json:"enable_metrics"`
 }
 
 // NewTestConfig return a config object with test settings

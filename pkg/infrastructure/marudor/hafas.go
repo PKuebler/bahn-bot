@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -137,7 +138,14 @@ func (h *HafasService) FindTrain(ctx context.Context, trainName string, date tim
 	}
 
 	var results []HafasTrainResult
-	_, err = h.client.do(req, &results)
+	res, err := h.client.do(req, &results)
+
+	if h.client.metrics != nil {
+		statusCode := strconv.Itoa(res.StatusCode)
+		name := strings.ReplaceAll(trainName, " ", "")
+		h.client.metrics.RequestsByTrainNameTotal.WithLabelValues(statusCode, name).Inc()
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +167,14 @@ func (h *HafasService) GetTrainByStation(ctx context.Context, trainName string, 
 	}
 
 	var train HafasTrain
-	_, err = h.client.do(req, &train)
+	res, err := h.client.do(req, &train)
+
+	if h.client.metrics != nil {
+		statusCode := strconv.Itoa(res.StatusCode)
+		name := strings.ReplaceAll(trainName, " ", "")
+		h.client.metrics.RequestsByTrainNameTotal.WithLabelValues(statusCode, name).Inc()
+	}
+
 	if err != nil {
 		return nil, err
 	}

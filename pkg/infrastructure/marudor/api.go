@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strconv"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -19,12 +21,13 @@ type APIClient struct {
 	UserAgent   string
 	httpClient  *http.Client
 	log         *logrus.Entry
+	metrics     *APIMetrics
 
 	HafasService *HafasService
 }
 
 // NewAPIClient return a client with all services
-func NewAPIClient(endpoint string, httpClient *http.Client, log *logrus.Entry) (*APIClient, error) {
+func NewAPIClient(endpoint string, httpClient *http.Client, log *logrus.Entry, metrics bool) (*APIClient, error) {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
@@ -43,6 +46,10 @@ func NewAPIClient(endpoint string, httpClient *http.Client, log *logrus.Entry) (
 
 		EndpointURL: endpointURL,
 		UserAgent:   "pkuebler/marudor-telegram-bot",
+	}
+
+	if metrics {
+		c.metrics = NewAPIMetrics()
 	}
 
 	log.Trace("add services..")
@@ -85,6 +92,8 @@ func (c *APIClient) newRequest(baseURL *url.URL, method string, path string, que
 }
 
 func (c *APIClient) do(req *http.Request, v interface{}) (*http.Response, error) {
+	startTime := time.Now()
+
 	res, err := c.httpClient.Do(req)
 	if err != nil {
 		c.log.Fatal(err)
@@ -99,6 +108,15 @@ func (c *APIClient) do(req *http.Request, v interface{}) (*http.Response, error)
 	}
 	c.log.Trace(req.URL.String())
 	c.log.Trace(string(requestDump))
+
+	if c.metrics != nil {
+		duration := time.Since(startTime)
+		path := req.URL.Path
+		statusCode := strconv.Itoa(res.StatusCode)
+
+		c.metrics.RequestsTotal.WithLabelValues(statusCode, path).Inc()
+		c.metrics.RequestDurationSeconds.WithLabelValues(statusCode, path).Observe(duration.Seconds())
+	}
 
 	if res.StatusCode < 200 || res.StatusCode >= 300 {
 		return res, errors.New(http.StatusText(res.StatusCode))

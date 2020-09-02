@@ -2,9 +2,12 @@ package cmd
 
 import (
 	"context"
+	"net/http"
 	"strconv"
+	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
@@ -15,6 +18,7 @@ import (
 	"github.com/pkuebler/bahn-bot/pkg/infrastructure/telegramconversation"
 	"github.com/pkuebler/bahn-bot/pkg/interface/cron"
 	"github.com/pkuebler/bahn-bot/pkg/interface/telegram"
+	"github.com/pkuebler/bahn-bot/pkg/metrics"
 )
 
 // NewBotCmd create a command to start the bot
@@ -51,8 +55,11 @@ func BotCommand(ctx context.Context, cmd *cobra.Command, args []string) {
 		log.Logger.Level = logrus.InfoLevel
 	}
 
+	// metrics
+	metricsRegistry := metrics.NewPrometheusMetric()
+
 	// external interfaces
-	api, err := marudor.NewAPIClient(cfg.APIConfig.APIEndpoint, nil, log)
+	api, err := marudor.NewAPIClient(cfg.APIConfig.APIEndpoint, nil, log, cfg.EnableMetrics)
 	if err != nil {
 		panic(err)
 	}
@@ -68,7 +75,7 @@ func BotCommand(ctx context.Context, cmd *cobra.Command, args []string) {
 
 	// interfaces
 	service := telegram.NewTelegramService(log, repo, app, hafas)
-	cronService := cron.NewCronJob(log, app)
+	cronService := cron.NewCronJob(log, app, cfg.EnableMetrics)
 
 	// conversationengine
 	router := telegramconversation.NewConversationRouter("start")
@@ -113,8 +120,12 @@ func BotCommand(ctx context.Context, cmd *cobra.Command, args []string) {
 		for update := range updates {
 			var tctx telegramconversation.TContext
 
+			startTime := time.Now()
+			metricsRegistry.TelegramInUpdatesTotal.Inc()
+
 			if update.CallbackQuery != nil {
 				log.Tracef("[%d][%s] Callback Query %s", update.CallbackQuery.Message.MessageID, update.CallbackQuery.From.UserName, update.CallbackQuery.Data)
+				metricsRegistry.TelegramInQueriesTotal.Inc()
 
 				chatID := strconv.FormatInt(update.CallbackQuery.Message.Chat.ID, 10)
 
@@ -130,7 +141,10 @@ func BotCommand(ctx context.Context, cmd *cobra.Command, args []string) {
 				command := update.Message.Command()
 				if command != "" {
 					log.Tracef("[%d][%s] Command %s", tctx.MessageID(), update.Message.From.UserName, command)
+					metricsRegistry.TelegramInCommandsTotal.Inc()
 					tctx.SetCommand(command, update.Message.CommandArguments())
+				} else {
+					metricsRegistry.TelegramInMessagesTotal.Inc()
 				}
 
 				tctx.SetMessage(update.Message.Text)
@@ -189,6 +203,7 @@ func BotCommand(ctx context.Context, cmd *cobra.Command, args []string) {
 					reply.ReplyMarkup = keyboard
 				}
 
+				metricsRegistry.TelegramOutMessagesTotal.Inc()
 				bot.Send(reply)
 			}
 
@@ -201,6 +216,9 @@ func BotCommand(ctx context.Context, cmd *cobra.Command, args []string) {
 				msgLog.Tracef("Save State %s with payload `%s` (old: %s / `%s`)", tctx.State(), tctx.StatePayload(), state, payload)
 				return tctx.State(), tctx.StatePayload(), nil
 			})
+
+			duration := time.Now().Sub(startTime).Seconds()
+			metricsRegistry.TelegramRequestDuration.Observe(duration)
 		}
 	}()
 
@@ -209,6 +227,7 @@ func BotCommand(ctx context.Context, cmd *cobra.Command, args []string) {
 		for tctx := range notificationChannel {
 			if tctx.IsReply() {
 				log.Tracef("Reply: %s", tctx.Reply())
+
 				reply := tgbotapi.NewMessage(tctx.ChatID64(), tctx.Reply())
 				reply.ParseMode = tgbotapi.ModeMarkdown
 
@@ -238,5 +257,16 @@ func BotCommand(ctx context.Context, cmd *cobra.Command, args []string) {
 	}()
 
 	cronService.Start(ctx)
+
+	// metric endpoint
+	if cfg.EnableMetrics {
+		log.Info("start metrics endpoint...")
+		http.Handle("/metrics", promhttp.Handler())
+		if err := http.ListenAndServe(":8080", nil); err != nil {
+			log.Error(err)
+			return
+		}
+	}
+
 	<-ctx.Done()
 }

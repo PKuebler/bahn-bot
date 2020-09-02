@@ -17,16 +17,22 @@ type CronJob struct {
 	application   *application.Application
 	notifications chan telegramconversation.TContext
 	log           *logrus.Entry
+	metrics       *CronMetrics
 }
 
 // NewCronJob service
-func NewCronJob(
-	log *logrus.Entry, application *application.Application) *CronJob {
-	return &CronJob{
+func NewCronJob(log *logrus.Entry, application *application.Application, metrics bool) *CronJob {
+	c := &CronJob{
 		application:   application,
 		notifications: make(chan telegramconversation.TContext),
 		log:           log,
 	}
+
+	if metrics {
+		c.metrics = NewCronMetrics()
+	}
+
+	return c
 }
 
 // Start ticker
@@ -63,6 +69,10 @@ func (c *CronJob) ClearDatabase(ctx context.Context) {
 func (c *CronJob) NotifyUsers(ctx context.Context) {
 	c.application.NotifyUsers(ctx, func(ctx context.Context, alarm *trainalarm.TrainAlarm, train marudor.HafasTrain, diff time.Duration) error {
 		tctx := telegramconversation.NewTContext(alarm.GetIdentifyer())
+
+		if c.metrics != nil {
+			c.metrics.TrainAlertNotificationsTotal.WithLabelValues(alarm.GetTrainName()).Inc()
+		}
 
 		txt := fmt.Sprintf("Zug %s hat `%s` Verspätung.", alarm.GetTrainName(), diff.String())
 
