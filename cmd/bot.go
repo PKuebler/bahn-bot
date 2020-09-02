@@ -161,11 +161,16 @@ func BotCommand(ctx context.Context, cmd *cobra.Command, args []string) {
 				if tctx.IsRemoveSuggestions() {
 					reply.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 				} else if tctx.IsSuggestions() {
-					buttons := []tgbotapi.KeyboardButton{}
+					buttons := [][]tgbotapi.KeyboardButton{}
 					for _, button := range tctx.Suggestions() {
-						buttons = append(buttons, tgbotapi.NewKeyboardButton(button.Label))
+						buttons = append(
+							buttons,
+							tgbotapi.NewKeyboardButtonRow(
+								tgbotapi.NewKeyboardButton(button.Label),
+							),
+						)
 					}
-					keyboard := tgbotapi.NewReplyKeyboard(buttons)
+					keyboard := tgbotapi.NewReplyKeyboard(buttons...)
 					reply.ReplyMarkup = keyboard
 				}
 
