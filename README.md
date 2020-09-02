@@ -72,7 +72,15 @@ services:
 
 ## Prometheus Endpoint
 
-The Prometheus endpoint is located under `:8080/metrics` when `metrics` is enabled in the Config.
+The Prometheus endpoint is located under `:8080/metrics` when `enable_metrics` is enabled in the Config.
+
+ONLY for local tests a docker-compose overwrite file is included.
+
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.prometheus.yml up
+```
+
+You can reach Prometheus on port 9090.
 
 ## DSGVO
 
