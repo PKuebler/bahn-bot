@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/pkuebler/bahn-bot/pkg/application"
-	"github.com/pkuebler/bahn-bot/pkg/domain/trainalarm"
+	"github.com/sirupsen/logrus"
+
 	"github.com/pkuebler/bahn-bot/pkg/infrastructure/marudor"
 	"github.com/pkuebler/bahn-bot/pkg/infrastructure/telegramconversation"
-	"github.com/sirupsen/logrus"
+	"github.com/pkuebler/bahn-bot/pkg/trainalarms/application"
+	"github.com/pkuebler/bahn-bot/pkg/trainalarms/domain"
 )
 
 // CronJob triggers applications
@@ -67,7 +68,7 @@ func (c *CronJob) ClearDatabase(ctx context.Context) {
 
 // NotifyUsers about train delays
 func (c *CronJob) NotifyUsers(ctx context.Context) {
-	c.application.NotifyUsers(ctx, func(ctx context.Context, alarm *trainalarm.TrainAlarm, train marudor.HafasTrain, diff time.Duration) error {
+	c.application.NotifyUsers(ctx, func(ctx context.Context, alarm *domain.TrainAlarm, train marudor.HafasTrain, diff time.Duration) error {
 		tctx := telegramconversation.NewTContext(alarm.GetIdentifyer())
 
 		if c.metrics != nil {

@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pkuebler/bahn-bot/pkg/domain/trainalarm"
+	"github.com/pkuebler/bahn-bot/pkg/trainalarms/domain"
 )
 
 // MemoryStateModel save the current state
@@ -21,7 +21,7 @@ type MemoryStateModel struct {
 
 // MemoryDatabase to test without persistence
 type MemoryDatabase struct {
-	TrainAlarms  map[string]*trainalarm.TrainAlarm
+	TrainAlarms  map[string]*domain.TrainAlarm
 	CurrentState []*MemoryStateModel
 	Mutex        *sync.Mutex
 }
@@ -29,14 +29,14 @@ type MemoryDatabase struct {
 // NewMemoryDatabase with mutex
 func NewMemoryDatabase() *MemoryDatabase {
 	return &MemoryDatabase{
-		TrainAlarms:  map[string]*trainalarm.TrainAlarm{},
+		TrainAlarms:  map[string]*domain.TrainAlarm{},
 		CurrentState: []*MemoryStateModel{},
 		Mutex:        &sync.Mutex{},
 	}
 }
 
 // GetOrCreateTrainAlarm creates a new alarm if none exists yet
-func (m *MemoryDatabase) GetOrCreateTrainAlarm(ctx context.Context, alarm *trainalarm.TrainAlarm) (*trainalarm.TrainAlarm, error) {
+func (m *MemoryDatabase) GetOrCreateTrainAlarm(ctx context.Context, alarm *domain.TrainAlarm) (*domain.TrainAlarm, error) {
 	m.Mutex.Lock()
 	defer m.Mutex.Unlock()
 
@@ -54,7 +54,7 @@ func (m *MemoryDatabase) GetOrCreateTrainAlarm(ctx context.Context, alarm *train
 }
 
 // GetTrainAlarm by id. returns NO error if nothing found
-func (m *MemoryDatabase) GetTrainAlarm(ctx context.Context, alarmID string) (*trainalarm.TrainAlarm, error) {
+func (m *MemoryDatabase) GetTrainAlarm(ctx context.Context, alarmID string) (*domain.TrainAlarm, error) {
 	m.Mutex.Lock()
 	defer m.Mutex.Unlock()
 
@@ -66,11 +66,11 @@ func (m *MemoryDatabase) GetTrainAlarm(ctx context.Context, alarmID string) (*tr
 }
 
 // GetTrainAlarms by identifyer and plattform. returns NO error if nothing found
-func (m *MemoryDatabase) GetTrainAlarms(ctx context.Context, identifyer string, plattform string) ([]*trainalarm.TrainAlarm, error) {
+func (m *MemoryDatabase) GetTrainAlarms(ctx context.Context, identifyer string, plattform string) ([]*domain.TrainAlarm, error) {
 	m.Mutex.Lock()
 	defer m.Mutex.Unlock()
 
-	alarms := []*trainalarm.TrainAlarm{}
+	alarms := []*domain.TrainAlarm{}
 
 	for _, alarm := range m.TrainAlarms {
 		if identifyer == alarm.GetIdentifyer() && plattform == alarm.GetPlattform() {
@@ -82,11 +82,11 @@ func (m *MemoryDatabase) GetTrainAlarms(ctx context.Context, identifyer string, 
 }
 
 // GetTrainAlarmsSortByLastNotificationAt with a limit. returns NO error if nothing found
-func (m *MemoryDatabase) GetTrainAlarmsSortByLastNotificationAt(ctx context.Context, limit int) ([]*trainalarm.TrainAlarm, error) {
-	results := []*trainalarm.TrainAlarm{}
+func (m *MemoryDatabase) GetTrainAlarmsSortByLastNotificationAt(ctx context.Context, limit int) ([]*domain.TrainAlarm, error) {
+	results := []*domain.TrainAlarm{}
 
 	// convert map to slice
-	alarms := []*trainalarm.TrainAlarm{}
+	alarms := []*domain.TrainAlarm{}
 
 	func() {
 		m.Mutex.Lock()
@@ -152,7 +152,7 @@ func (m *MemoryDatabase) DeleteOldTrainAlarms(ctx context.Context, threshold tim
 }
 
 // UpdateTrainAlarm create a transaction, find the model and save it after updateFn. returns a error if model not found or pipe the error from updateFn
-func (m *MemoryDatabase) UpdateTrainAlarm(ctx context.Context, alarmID string, updateFn func(alarm *trainalarm.TrainAlarm) (*trainalarm.TrainAlarm, error)) error {
+func (m *MemoryDatabase) UpdateTrainAlarm(ctx context.Context, alarmID string, updateFn func(alarm *domain.TrainAlarm) (*domain.TrainAlarm, error)) error {
 	m.Mutex.Lock()
 	defer m.Mutex.Unlock()
 
@@ -170,7 +170,7 @@ func (m *MemoryDatabase) UpdateTrainAlarm(ctx context.Context, alarmID string, u
 }
 
 // findTrainAlarm returns NO error if nothing found
-func (m *MemoryDatabase) findTrainAlarm(query *trainalarm.TrainAlarm) (*trainalarm.TrainAlarm, error) {
+func (m *MemoryDatabase) findTrainAlarm(query *domain.TrainAlarm) (*domain.TrainAlarm, error) {
 	for _, alarm := range m.TrainAlarms {
 		if alarm.Compare(query) {
 			return alarm, nil

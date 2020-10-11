@@ -11,14 +11,16 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/pkuebler/bahn-bot/pkg/application"
 	"github.com/pkuebler/bahn-bot/pkg/config"
 	"github.com/pkuebler/bahn-bot/pkg/infrastructure/marudor"
-	"github.com/pkuebler/bahn-bot/pkg/infrastructure/repository"
 	"github.com/pkuebler/bahn-bot/pkg/infrastructure/telegramconversation"
 	"github.com/pkuebler/bahn-bot/pkg/interface/cron"
 	"github.com/pkuebler/bahn-bot/pkg/interface/telegram"
 	"github.com/pkuebler/bahn-bot/pkg/metrics"
+	trainalarmApplication "github.com/pkuebler/bahn-bot/pkg/trainalarms/application"
+	trainalarmRepository "github.com/pkuebler/bahn-bot/pkg/trainalarms/repository"
+	webhookApplication "github.com/pkuebler/bahn-bot/pkg/webhooks/application"
+	webhookRepository "github.com/pkuebler/bahn-bot/pkg/webhooks/repository"
 )
 
 // NewBotCmd create a command to start the bot
@@ -66,16 +68,19 @@ func BotCommand(ctx context.Context, cmd *cobra.Command, args []string) {
 	hafas := api.HafasService
 
 	// storage
-	// repo := repository.NewMemoryDatabase()
-	repo := repository.NewSQLDatabase(cfg.Database.Dialect, cfg.Database.Path)
-	defer repo.Close()
+	// repo := trainalarmRepository.NewMemoryDatabase()
+	trainalarmRepo := trainalarmRepository.NewSQLDatabase(cfg.Database.Dialect, cfg.Database.Path)
+	defer trainalarmRepo.Close()
+	webhookRepo := webhookRepository.NewSQLDatabase(cfg.Database.Dialect, cfg.Database.Path)
+	defer webhookRepo.Close()
 
 	// application
-	app := application.NewApplication(hafas, repo, log)
+	trainalarmApp := trainalarmApplication.NewApplication(hafas, trainalarmRepo, log)
+	webhookApp := webhookApplication.NewApplication(trainalarmRepo, webhookRepo, log)
 
 	// interfaces
-	service := telegram.NewTelegramService(log, repo, app, hafas)
-	cronService := cron.NewCronJob(log, app, cfg.EnableMetrics)
+	service := telegram.NewTelegramService(log, cfg, trainalarmRepo, webhookRepo, webhookApp, trainalarmApp, hafas)
+	cronService := cron.NewCronJob(log, trainalarmApp, cfg.EnableMetrics)
 
 	// conversationengine
 	router := telegramconversation.NewConversationRouter("start")
@@ -88,6 +93,14 @@ func BotCommand(ctx context.Context, cmd *cobra.Command, args []string) {
 	router.OnCommand("help", "start")
 	router.OnState("start", service.Start)
 	router.OnState("cancel", service.Cancel)
+
+	router.OnCommand("webhooks", "listwebhooks")
+	router.OnState("listwebhooks", service.Webhooks)
+	router.OnState("webhook", service.WebhookMenu)
+	router.OnState("deletewebhook", service.DeleteWebhook)
+
+	router.OnCommand("newwebhook", "newwebhook")
+	router.OnState("newwebhook", service.NewWebhook)
 
 	router.OnCommand("myalarms", "listalarms")
 	router.OnState("listalarms", service.ListTrainAlarms)
@@ -149,7 +162,7 @@ func BotCommand(ctx context.Context, cmd *cobra.Command, args []string) {
 
 				tctx.SetMessage(update.Message.Text)
 
-				if state, payload, err := repo.GetState(ctx, tctx.ChatID(), "telegram"); err == nil {
+				if state, payload, err := trainalarmRepo.GetState(ctx, tctx.ChatID(), "telegram"); err == nil {
 					log.Tracef("[%d] Load State %s (Payload: %s)", tctx.MessageID(), state, payload)
 					tctx.SetStatePayload(payload)
 					tctx.ChangeState(state)
@@ -212,7 +225,7 @@ func BotCommand(ctx context.Context, cmd *cobra.Command, args []string) {
 				bot.DeleteMessage(tgbotapi.NewDeleteMessage(tctx.ChatID64(), tctx.DeletedMessageID()))
 			}
 
-			repo.UpdateState(ctx, tctx.ChatID(), "telegram", func(state string, payload string) (string, string, error) {
+			trainalarmRepo.UpdateState(ctx, tctx.ChatID(), "telegram", func(state string, payload string) (string, string, error) {
 				msgLog.Tracef("Save State %s with payload `%s` (old: %s / `%s`)", tctx.State(), tctx.StatePayload(), state, payload)
 				return tctx.State(), tctx.StatePayload(), nil
 			})

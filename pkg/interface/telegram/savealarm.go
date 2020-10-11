@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/pkuebler/bahn-bot/pkg/application"
 	"github.com/pkuebler/bahn-bot/pkg/infrastructure/telegramconversation"
+	"github.com/pkuebler/bahn-bot/pkg/trainalarms/application"
 )
 
 // SaveAlarm to database
@@ -36,7 +36,7 @@ func (t *TelegramService) SaveAlarm(ctx telegramconversation.TContext) telegramc
 		StationDate: stationDate,
 	}
 
-	err = t.application.AddTrainAlarm(context.Background(), cmd)
+	err = t.trainalarmApp.AddTrainAlarm(context.Background(), cmd)
 	if err != nil {
 		log.Error(err)
 		return ctx.SendWithState("Irgendetwas ist schief gelaufen. :/", "start")

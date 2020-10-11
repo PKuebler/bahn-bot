@@ -5,8 +5,9 @@ import (
 	"errors"
 	"time"
 
-	"github.com/pkuebler/bahn-bot/pkg/domain/trainalarm"
 	"github.com/sirupsen/logrus"
+
+	"github.com/pkuebler/bahn-bot/pkg/trainalarms/domain"
 )
 
 // AddTrainAlarmCmd for AddTrainAlarm
@@ -47,7 +48,7 @@ func (a *Application) AddTrainAlarm(ctx context.Context, cmd AddTrainAlarmCmd) e
 		}
 	}
 
-	alarm, err := trainalarm.NewTrainAlarm(
+	alarm, err := domain.NewTrainAlarm(
 		cmd.Identifyer,
 		cmd.Plattform,
 		cmd.TrainName,

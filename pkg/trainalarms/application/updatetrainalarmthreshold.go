@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/pkuebler/bahn-bot/pkg/domain/trainalarm"
 	"github.com/sirupsen/logrus"
+
+	"github.com/pkuebler/bahn-bot/pkg/trainalarms/domain"
 )
 
 // UpdateTrainAlarmThresholdCmd for UpdateTrainAlarmThreshold
@@ -22,7 +23,7 @@ func (a *Application) UpdateTrainAlarmThreshold(ctx context.Context, cmd UpdateT
 	})
 
 	// search alarm at repository
-	err := a.repo.UpdateTrainAlarm(ctx, cmd.AlarmID, func(alarm *trainalarm.TrainAlarm) (*trainalarm.TrainAlarm, error) {
+	err := a.repo.UpdateTrainAlarm(ctx, cmd.AlarmID, func(alarm *domain.TrainAlarm) (*domain.TrainAlarm, error) {
 		alarm.SetDelayThresholdMinutes(cmd.ThresholdMinutes)
 		return alarm, nil
 	})

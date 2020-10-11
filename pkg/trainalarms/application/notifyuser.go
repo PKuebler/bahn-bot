@@ -5,13 +5,14 @@ import (
 	"errors"
 	"time"
 
-	"github.com/pkuebler/bahn-bot/pkg/domain/trainalarm"
-	"github.com/pkuebler/bahn-bot/pkg/infrastructure/marudor"
 	"github.com/sirupsen/logrus"
+
+	"github.com/pkuebler/bahn-bot/pkg/infrastructure/marudor"
+	"github.com/pkuebler/bahn-bot/pkg/trainalarms/domain"
 )
 
 // NotifyUsers check train delay threshold and call the notifyFn
-func (a *Application) NotifyUsers(ctx context.Context, notifyFn func(ctx context.Context, alarm *trainalarm.TrainAlarm, train marudor.HafasTrain, diff time.Duration) error) error {
+func (a *Application) NotifyUsers(ctx context.Context, notifyFn func(ctx context.Context, alarm *domain.TrainAlarm, train marudor.HafasTrain, diff time.Duration) error) error {
 	// sort alarms by lastNotificationAt
 	alarms, err := a.repo.GetTrainAlarmsSortByLastNotificationAt(ctx, 20)
 	if err != nil {
@@ -26,7 +27,7 @@ func (a *Application) NotifyUsers(ctx context.Context, notifyFn func(ctx context
 	return nil
 }
 
-func (a *Application) notifyUser(ctx context.Context, notifyFn func(ctx context.Context, alarm *trainalarm.TrainAlarm, train marudor.HafasTrain, diff time.Duration) error, alarm trainalarm.TrainAlarm) error {
+func (a *Application) notifyUser(ctx context.Context, notifyFn func(ctx context.Context, alarm *domain.TrainAlarm, train marudor.HafasTrain, diff time.Duration) error, alarm domain.TrainAlarm) error {
 	log := a.log.WithFields(logrus.Fields{
 		"alarmID":    alarm.GetID(),
 		"identifyer": alarm.GetIdentifyer(),
@@ -35,7 +36,7 @@ func (a *Application) notifyUser(ctx context.Context, notifyFn func(ctx context.
 	})
 
 	// UpdateTrainAlarm use a transaction
-	err := a.repo.UpdateTrainAlarm(ctx, alarm.GetID(), func(t *trainalarm.TrainAlarm) (*trainalarm.TrainAlarm, error) {
+	err := a.repo.UpdateTrainAlarm(ctx, alarm.GetID(), func(t *domain.TrainAlarm) (*domain.TrainAlarm, error) {
 		// search train
 		// todo: use cache
 		train, err := a.hafas.GetTrainByStation(ctx, t.GetTrainName(), t.GetStationEVA(), t.GetStationDate())

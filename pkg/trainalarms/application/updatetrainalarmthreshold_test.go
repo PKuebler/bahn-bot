@@ -8,14 +8,14 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/pkuebler/bahn-bot/pkg/domain/trainalarm"
+	"github.com/pkuebler/bahn-bot/pkg/trainalarms/domain"
 )
 
 func TestUpdateTrainAlarmThreshold(t *testing.T) {
 	app, repo := createTestCase(true)
 
 	ctx := context.Background()
-	alarm, err := trainalarm.NewTrainAlarm(
+	alarm, err := domain.NewTrainAlarm(
 		uuid.New().String(),
 		"telegram",
 		"ice 4",

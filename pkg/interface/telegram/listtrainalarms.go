@@ -24,9 +24,6 @@ func (t *TelegramService) ListTrainAlarms(ctx telegramconversation.TContext) tel
 	}
 
 	if len(alarms) == 0 {
-		if ctx.IsButtonPressed() {
-			ctx.DeleteMessage(ctx.MessageID())
-		}
 		return ctx.SendWithState("Du beobachtest noch keine Züge. /help", "start")
 	}
 

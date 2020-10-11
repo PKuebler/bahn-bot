@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/pkuebler/bahn-bot/pkg/domain/trainalarm"
 	"github.com/sirupsen/logrus"
+
+	"github.com/pkuebler/bahn-bot/pkg/trainalarms/domain"
 )
 
 // DeleteTrainAlarmCmd for DeleteTrainAlarm
@@ -14,7 +15,7 @@ type DeleteTrainAlarmCmd struct {
 }
 
 // DeleteTrainAlarm at database
-func (a *Application) DeleteTrainAlarm(ctx context.Context, cmd DeleteTrainAlarmCmd) (*trainalarm.TrainAlarm, error) {
+func (a *Application) DeleteTrainAlarm(ctx context.Context, cmd DeleteTrainAlarmCmd) (*domain.TrainAlarm, error) {
 	log := a.log.WithFields(logrus.Fields{
 		"alarmID": cmd.AlarmID,
 	})
