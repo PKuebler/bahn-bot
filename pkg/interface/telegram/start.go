@@ -24,6 +24,9 @@ func (t *TelegramService) Start(ctx telegramconversation.TContext) telegramconve
 /myalarms Bearbeite deine Alarme
 /newalarm Erzeuge neuen Alarm
 
+/webhooks Bearbeite deine Webhooks
+/newwebhook Verknüpfe travelynx.de
+
 /cancel Breche aktuelle Option ab `)
 
 	ctx.Send(txt)

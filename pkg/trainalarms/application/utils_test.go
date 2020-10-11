@@ -4,7 +4,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/pkuebler/bahn-bot/pkg/infrastructure/marudor"
-	"github.com/pkuebler/bahn-bot/pkg/infrastructure/repository"
+	"github.com/pkuebler/bahn-bot/pkg/trainalarms/repository"
 )
 
 func createTestCase(trainExists bool) (*Application, *repository.MemoryDatabase) {
@@ -12,7 +12,7 @@ func createTestCase(trainExists bool) (*Application, *repository.MemoryDatabase)
 
 	hafas := &marudor.HafasMock{TrainExists: trainExists}
 	repo := repository.NewMemoryDatabase()
-	app := NewApplication(hafas, repo, log)
+	app := NewApplication(hafas, repo, repo, log)
 
 	return app, repo
 }

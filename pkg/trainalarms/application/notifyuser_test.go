@@ -9,8 +9,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/pkuebler/bahn-bot/pkg/domain/trainalarm"
 	"github.com/pkuebler/bahn-bot/pkg/infrastructure/marudor"
+	"github.com/pkuebler/bahn-bot/pkg/trainalarms/domain"
 )
 
 func TestNotifyUser(t *testing.T) {
@@ -52,7 +52,7 @@ func TestNotifyUser(t *testing.T) {
 	for _, testCase := range testCases {
 		app, repo := createTestCase(testCase.HafasFound)
 
-		alarm, err := trainalarm.NewTrainAlarm(
+		alarm, err := domain.NewTrainAlarm(
 			uuid.New().String(),
 			"telegram",
 			"ice 4",
@@ -70,7 +70,7 @@ func TestNotifyUser(t *testing.T) {
 		}
 
 		isRunning := false
-		err = app.notifyUser(ctx, func(ctx context.Context, alarm *trainalarm.TrainAlarm, train marudor.HafasTrain, diff time.Duration) error {
+		err = app.notifyUser(ctx, func(ctx context.Context, alarm *domain.TrainAlarm, train marudor.HafasTrain, diff time.Duration) error {
 			isRunning = true
 
 			if !testCase.NotifySuccess {
@@ -97,7 +97,7 @@ func TestNotifyUsers(t *testing.T) {
 	ctx := context.Background()
 
 	for i := 0; i < 4; i++ {
-		alarm, err := trainalarm.NewTrainAlarm(
+		alarm, err := domain.NewTrainAlarm(
 			uuid.New().String(),
 			"telegram",
 			"ice 4",
@@ -111,7 +111,7 @@ func TestNotifyUsers(t *testing.T) {
 		repo.TrainAlarms[alarm.GetID()] = alarm
 	}
 
-	err := app.NotifyUsers(ctx, func(ctx context.Context, alarm *trainalarm.TrainAlarm, train marudor.HafasTrain, diff time.Duration) error {
+	err := app.NotifyUsers(ctx, func(ctx context.Context, alarm *domain.TrainAlarm, train marudor.HafasTrain, diff time.Duration) error {
 		return nil
 	})
 	assert.Nil(t, err)

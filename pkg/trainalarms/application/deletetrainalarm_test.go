@@ -6,15 +6,16 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/pkuebler/bahn-bot/pkg/domain/trainalarm"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/pkuebler/bahn-bot/pkg/trainalarms/domain"
 )
 
 func TestDeleteTrainAlarm(t *testing.T) {
 	app, repo := createTestCase(true)
 	ctx := context.Background()
 
-	alarm, err := trainalarm.NewTrainAlarm(uuid.New().String(), "telegram", "ice 4", 8503000, int64(1595797980000), time.Now(), "Berlin Ostbahnhof")
+	alarm, err := domain.NewTrainAlarm(uuid.New().String(), "telegram", "ice 4", 8503000, int64(1595797980000), time.Now(), "Berlin Ostbahnhof")
 	assert.Nil(t, err)
 	assert.NotNil(t, alarm)
 

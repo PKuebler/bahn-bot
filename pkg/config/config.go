@@ -24,6 +24,12 @@ type DatabaseConfig struct {
 	Path    string `env:"DB_PATH" json:"path"`
 }
 
+// WebhookConfig connection data
+type WebhookConfig struct {
+	Endpoint string `env:"WEBHOOK_ENDPOINT" json:"endpoint"`
+	Port     string `env:"WEBHOOK_PORT" json:"port"`
+}
+
 // Config contains the complete service configuration
 type Config struct {
 	APIConfig     APIConfig      `json:"api"`
@@ -31,6 +37,7 @@ type Config struct {
 	Telegram      TelegramConfig `json:"telegram"`
 	LogLevel      string         `env:"LOG_LEVEL" json:"loglevel"`
 	EnableMetrics bool           `json:"enable_metrics"`
+	Webhook       WebhookConfig  `json:"webhook"`
 }
 
 // NewTestConfig return a config object with test settings
@@ -40,6 +47,9 @@ func NewTestConfig() *Config {
 			APIEndpoint: "https://marudor.de/api",
 		},
 		LogLevel: "trace",
+		Webhook: WebhookConfig{
+			Endpoint: "http://localhost/hook",
+		},
 	}
 }
 
@@ -71,6 +81,14 @@ func ReadConfig(file string, log *logrus.Entry) *Config {
 
 	if config.APIConfig.APIEndpoint == "" {
 		config.APIConfig.APIEndpoint = "https://marudor.de/api"
+	}
+
+	if config.Webhook.Endpoint == "" {
+		panic("Need WEBHOOK_ENDPOINT")
+	}
+
+	if config.Webhook.Port == "" {
+		config.Webhook.Port = ":8080"
 	}
 
 	return &config

@@ -1,4 +1,4 @@
-package trainalarm
+package domain
 
 import (
 	"time"

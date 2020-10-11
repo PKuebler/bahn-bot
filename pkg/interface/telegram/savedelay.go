@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/pkuebler/bahn-bot/pkg/application"
 	"github.com/pkuebler/bahn-bot/pkg/infrastructure/telegramconversation"
+	"github.com/pkuebler/bahn-bot/pkg/trainalarms/application"
 )
 
 var (
@@ -52,7 +52,7 @@ func (t *TelegramService) SaveDelay(ctx telegramconversation.TContext) telegramc
 		ThresholdMinutes: int(thresholdMinutes.Minutes()),
 	}
 
-	err = t.application.UpdateTrainAlarmThreshold(context.Background(), cmd)
+	err = t.trainalarmApp.UpdateTrainAlarmThreshold(context.Background(), cmd)
 	if err != nil {
 		log.Error(err)
 		return ctx.SendWithState("Irgendetwas ist schief gelaufen. :/", "start")

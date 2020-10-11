@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/pkuebler/bahn-bot/pkg/application"
 	"github.com/pkuebler/bahn-bot/pkg/infrastructure/telegramconversation"
+	"github.com/pkuebler/bahn-bot/pkg/trainalarms/application"
 )
 
 // DeleteAlarm from database
@@ -22,7 +22,7 @@ func (t *TelegramService) DeleteAlarm(ctx telegramconversation.TContext) telegra
 	cmd := application.DeleteTrainAlarmCmd{
 		AlarmID: ctx.ButtonData(),
 	}
-	alarm, _ := t.application.DeleteTrainAlarm(context.Background(), cmd)
+	alarm, _ := t.trainalarmApp.DeleteTrainAlarm(context.Background(), cmd)
 
 	return ctx.SendWithState(fmt.Sprintf("Alarm `%s > %s` gelöscht.", alarm.GetTrainName(), alarm.GetFinalDestinationName()), "start")
 }

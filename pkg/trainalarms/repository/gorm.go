@@ -6,7 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 
-	"github.com/pkuebler/bahn-bot/pkg/domain/trainalarm"
+	"github.com/pkuebler/bahn-bot/pkg/trainalarms/domain"
 )
 
 // SQLDatabase to persistence
@@ -46,7 +46,7 @@ type SQLTrainAlarmModel struct {
 }
 
 // NewSQLTrainAlarmModel convert domain model to repository model
-func NewSQLTrainAlarmModel(alarm *trainalarm.TrainAlarm) *SQLTrainAlarmModel {
+func NewSQLTrainAlarmModel(alarm *domain.TrainAlarm) *SQLTrainAlarmModel {
 	return &SQLTrainAlarmModel{
 		ID:                    alarm.GetID(),
 		Identifyer:            alarm.GetIdentifyer(),
@@ -63,8 +63,8 @@ func NewSQLTrainAlarmModel(alarm *trainalarm.TrainAlarm) *SQLTrainAlarmModel {
 }
 
 // TrainAlarm convert to TrainAlarm domain model
-func (s *SQLTrainAlarmModel) TrainAlarm() *trainalarm.TrainAlarm {
-	alarm, _ := trainalarm.NewTrainAlarmFromRepository(
+func (s *SQLTrainAlarmModel) TrainAlarm() *domain.TrainAlarm {
+	alarm, _ := domain.NewTrainAlarmFromRepository(
 		s.ID,
 		s.Identifyer,
 		s.Plattform,
@@ -92,7 +92,7 @@ type SQLStateModel struct {
 }
 
 // GetOrCreateTrainAlarm creates a new alarm if none exists yet
-func (s *SQLDatabase) GetOrCreateTrainAlarm(ctx context.Context, alarm *trainalarm.TrainAlarm) (*trainalarm.TrainAlarm, error) {
+func (s *SQLDatabase) GetOrCreateTrainAlarm(ctx context.Context, alarm *domain.TrainAlarm) (*domain.TrainAlarm, error) {
 	var oldModel SQLTrainAlarmModel
 	if res := s.db.Where(
 		"identifyer = ? AND plattform = ? AND train_name = ? AND station_eva = ? AND station_date = ?",
@@ -117,7 +117,7 @@ func (s *SQLDatabase) GetOrCreateTrainAlarm(ctx context.Context, alarm *trainala
 }
 
 // GetTrainAlarm by id. returns NO error if nothing found
-func (s *SQLDatabase) GetTrainAlarm(ctx context.Context, alarmID string) (*trainalarm.TrainAlarm, error) {
+func (s *SQLDatabase) GetTrainAlarm(ctx context.Context, alarmID string) (*domain.TrainAlarm, error) {
 	var alarm SQLTrainAlarmModel
 	if res := s.db.Where("id = ?", alarmID).Take(&alarm); res.Error != nil {
 		if res.RecordNotFound() {
@@ -130,7 +130,7 @@ func (s *SQLDatabase) GetTrainAlarm(ctx context.Context, alarmID string) (*train
 }
 
 // GetTrainAlarms by identifyer and plattform. returns NO error if nothing found
-func (s *SQLDatabase) GetTrainAlarms(ctx context.Context, identifyer string, plattform string) ([]*trainalarm.TrainAlarm, error) {
+func (s *SQLDatabase) GetTrainAlarms(ctx context.Context, identifyer string, plattform string) ([]*domain.TrainAlarm, error) {
 	var results []SQLTrainAlarmModel
 	if res := s.db.Where("identifyer = ? AND plattform = ?", identifyer, plattform).Find(&results); res.Error != nil {
 		if res.RecordNotFound() {
@@ -140,7 +140,7 @@ func (s *SQLDatabase) GetTrainAlarms(ctx context.Context, identifyer string, pla
 	}
 
 	// convert
-	alarms := []*trainalarm.TrainAlarm{}
+	alarms := []*domain.TrainAlarm{}
 	for _, result := range results {
 		alarms = append(alarms, result.TrainAlarm())
 	}
@@ -149,7 +149,7 @@ func (s *SQLDatabase) GetTrainAlarms(ctx context.Context, identifyer string, pla
 }
 
 // GetTrainAlarmsSortByLastNotificationAt with a limit. returns NO error if nothing found
-func (s *SQLDatabase) GetTrainAlarmsSortByLastNotificationAt(ctx context.Context, limit int) ([]*trainalarm.TrainAlarm, error) {
+func (s *SQLDatabase) GetTrainAlarmsSortByLastNotificationAt(ctx context.Context, limit int) ([]*domain.TrainAlarm, error) {
 	var results []SQLTrainAlarmModel
 	if res := s.db.Limit(limit).Order("last_notification_at").Find(&results); res.Error != nil {
 		if res.RecordNotFound() {
@@ -159,7 +159,7 @@ func (s *SQLDatabase) GetTrainAlarmsSortByLastNotificationAt(ctx context.Context
 	}
 
 	// convert
-	alarms := []*trainalarm.TrainAlarm{}
+	alarms := []*domain.TrainAlarm{}
 	for _, result := range results {
 		alarms = append(alarms, result.TrainAlarm())
 	}
@@ -180,7 +180,7 @@ func (s *SQLDatabase) DeleteOldTrainAlarms(ctx context.Context, threshold time.T
 }
 
 // UpdateTrainAlarm create a transaction, find the model and save it after updateFn. returns a error if model not found or pipe the error from updateFn
-func (s *SQLDatabase) UpdateTrainAlarm(ctx context.Context, alarmID string, updateFn func(alarm *trainalarm.TrainAlarm) (*trainalarm.TrainAlarm, error)) error {
+func (s *SQLDatabase) UpdateTrainAlarm(ctx context.Context, alarmID string, updateFn func(alarm *domain.TrainAlarm) (*domain.TrainAlarm, error)) error {
 	var model SQLTrainAlarmModel
 	if res := s.db.Where("id = ?", alarmID).Take(&model); res.Error != nil {
 		return res.Error

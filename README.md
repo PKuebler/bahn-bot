@@ -41,8 +41,7 @@ All parameters can be overwritten by ENV variable.
         "path": "host=myhost port=myport user=gorm dbname=gorm password=mypassword"
     },
     "loglevel": "trace",
-    "metrics": false
-}
+    "metrics": false,
 ```
 
 - `API_ENDPOINT` marudor endpoint

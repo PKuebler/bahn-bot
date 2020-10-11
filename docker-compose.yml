@@ -15,8 +15,8 @@ services:
       - POSTGRES_USER=bahn-bot
       - POSTGRES_PASSWORD=supersecretpassword
       - POSTGRES_DB=bahn-bot
-    volumes:
-      - ./data:/var/lib/postgresql/data
+#    volumes:
+#      - ./data:/var/lib/postgresql/data
 
   # mysql:
   #   image: mysql:5.7

@@ -3,9 +3,10 @@ package application
 import (
 	"context"
 
-	"github.com/pkuebler/bahn-bot/pkg/domain/trainalarm"
-	"github.com/pkuebler/bahn-bot/pkg/infrastructure/marudor"
 	"github.com/sirupsen/logrus"
+
+	"github.com/pkuebler/bahn-bot/pkg/infrastructure/marudor"
+	trainalarmDomain "github.com/pkuebler/bahn-bot/pkg/trainalarms/domain"
 )
 
 // Train by hafas
@@ -20,12 +21,12 @@ type HafasService interface {
 // Application represents all usecases
 type Application struct {
 	hafas HafasService
-	repo  trainalarm.Repository
+	repo  trainalarmDomain.Repository
 	log   *logrus.Entry
 }
 
 // NewApplication returns a application service object
-func NewApplication(hafas HafasService, repo trainalarm.Repository, log *logrus.Entry) *Application {
+func NewApplication(hafas HafasService, repo trainalarmDomain.Repository, log *logrus.Entry) *Application {
 	return &Application{
 		hafas: hafas,
 		repo:  repo,

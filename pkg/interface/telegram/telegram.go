@@ -7,17 +7,23 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pkuebler/bahn-bot/pkg/application"
-	"github.com/pkuebler/bahn-bot/pkg/domain/trainalarm"
-	"github.com/pkuebler/bahn-bot/pkg/infrastructure/marudor"
 	"github.com/sirupsen/logrus"
+
+	"github.com/pkuebler/bahn-bot/pkg/config"
+	"github.com/pkuebler/bahn-bot/pkg/infrastructure/marudor"
+	trainalarmApplication "github.com/pkuebler/bahn-bot/pkg/trainalarms/application"
+	trainalarmDomain "github.com/pkuebler/bahn-bot/pkg/trainalarms/domain"
+	webhookApplication "github.com/pkuebler/bahn-bot/pkg/webhooks/application"
+	webhookDomain "github.com/pkuebler/bahn-bot/pkg/webhooks/domain"
 )
 
 // Application with business logic
 type Application interface {
-	DeleteTrainAlarm(ctx context.Context, cmd application.DeleteTrainAlarmCmd) (*trainalarm.TrainAlarm, error)
-	AddTrainAlarm(ctx context.Context, cmd application.AddTrainAlarmCmd) error
-	UpdateTrainAlarmThreshold(ctx context.Context, cmd application.UpdateTrainAlarmThresholdCmd) error
+	DeleteTrainAlarm(ctx context.Context, cmd trainalarmApplication.DeleteTrainAlarmCmd) (*trainalarmDomain.TrainAlarm, error)
+	AddTrainAlarm(ctx context.Context, cmd trainalarmApplication.AddTrainAlarmCmd) error
+	UpdateTrainAlarmThreshold(ctx context.Context, cmd trainalarmApplication.UpdateTrainAlarmThresholdCmd) error
+	AddWebhook(ctx context.Context, cmd webhookApplication.AddWebhookCmd) (*webhookDomain.Webhook, error)
+	DeleteWebhook(ctx context.Context, cmd webhookApplication.DeleteWebhookCmd) (*webhookDomain.Webhook, error)
 }
 
 // HafasService to request train informations
@@ -28,17 +34,31 @@ type HafasService interface {
 // TelegramService to handle requests
 type TelegramService struct {
 	log                  *logrus.Entry
-	trainAlarmRepository trainalarm.Repository
-	application          Application
+	config               *config.Config
+	trainAlarmRepository trainalarmDomain.Repository
+	trainalarmApp        *trainalarmApplication.Application
+	webhookRepository    webhookDomain.Repository
+	webhookApp           *webhookApplication.Application
 	hafas                HafasService
 }
 
 // NewTelegramService to create a new service
-func NewTelegramService(log *logrus.Entry, repository trainalarm.Repository, application Application, hafas HafasService) *TelegramService {
+func NewTelegramService(
+	log *logrus.Entry,
+	cfg *config.Config,
+	trainAlarmRepository trainalarmDomain.Repository,
+	webhookRepository webhookDomain.Repository,
+	webhookApp *webhookApplication.Application,
+	trainalarmApp *trainalarmApplication.Application,
+	hafas HafasService,
+) *TelegramService {
 	return &TelegramService{
 		log:                  log.WithField("service", "telegram"),
-		trainAlarmRepository: repository,
-		application:          application,
+		config:               cfg,
+		trainAlarmRepository: trainAlarmRepository,
+		trainalarmApp:        trainalarmApp,
+		webhookRepository:    webhookRepository,
+		webhookApp:           webhookApp,
 		hafas:                hafas,
 	}
 }

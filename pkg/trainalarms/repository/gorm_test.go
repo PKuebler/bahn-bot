@@ -12,7 +12,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/pkuebler/bahn-bot/pkg/domain/trainalarm"
+	"github.com/pkuebler/bahn-bot/pkg/trainalarms/domain"
 )
 
 func TestNewSQLDatabase(t *testing.T) {
@@ -22,8 +22,8 @@ func TestNewSQLDatabase(t *testing.T) {
 	db.Close()
 }
 
-func TestConvertModel(t *testing.T) {
-	alarm, err := trainalarm.NewTrainAlarm("mychatID", "telegram", "ICE 7", 123456, 1234567890, time.Now(), "Berlin Ostbahnhof")
+func TestConvertTrainAlarmModel(t *testing.T) {
+	alarm, err := domain.NewTrainAlarm("mychatID", "telegram", "ICE 7", 123456, 1234567890, time.Now(), "Berlin Ostbahnhof")
 	assert.NotNil(t, alarm)
 	assert.Nil(t, err)
 
@@ -127,7 +127,7 @@ func TestSQLGetTrainAlarms(t *testing.T) {
 	assert.Len(t, alarms, 0)
 
 	for i := 0; i < 4; i++ {
-		alarm, err := trainalarm.NewTrainAlarm("1234", "telegram", fmt.Sprintf("ice %d", i), i, int64(i), time.Now(), "Berlin Ostbahnhof")
+		alarm, err := domain.NewTrainAlarm("1234", "telegram", fmt.Sprintf("ice %d", i), i, int64(i), time.Now(), "Berlin Ostbahnhof")
 		assert.Nil(t, err)
 		if i > 1 {
 			alarm.SetSuccessfulNotification()
@@ -156,7 +156,7 @@ func TestSQLGetTrainAlarmsSortByLastNotificationAt(t *testing.T) {
 	assert.Len(t, alarms, 0)
 
 	for i := 0; i < 4; i++ {
-		alarm, err := trainalarm.NewTrainAlarm("identifyer", "telegram", fmt.Sprintf("ice %d", i), i, int64(i), time.Now(), "Berlin Ostbahnhof")
+		alarm, err := domain.NewTrainAlarm("identifyer", "telegram", fmt.Sprintf("ice %d", i), i, int64(i), time.Now(), "Berlin Ostbahnhof")
 		assert.Nil(t, err)
 		if i > 1 {
 			alarm.SetSuccessfulNotification()
@@ -216,7 +216,7 @@ func TestSQLUpdateTrainAlarm(t *testing.T) {
 
 	// not found
 	notRunning := true
-	err = db.UpdateTrainAlarm(ctx, alarm.GetID(), func(alarm *trainalarm.TrainAlarm) (*trainalarm.TrainAlarm, error) {
+	err = db.UpdateTrainAlarm(ctx, alarm.GetID(), func(alarm *domain.TrainAlarm) (*domain.TrainAlarm, error) {
 		notRunning = false
 		return nil, nil
 	})
@@ -228,7 +228,7 @@ func TestSQLUpdateTrainAlarm(t *testing.T) {
 	assert.Nil(t, err)
 
 	running := false
-	err = db.UpdateTrainAlarm(ctx, alarm.GetID(), func(alarm *trainalarm.TrainAlarm) (*trainalarm.TrainAlarm, error) {
+	err = db.UpdateTrainAlarm(ctx, alarm.GetID(), func(alarm *domain.TrainAlarm) (*domain.TrainAlarm, error) {
 		running = true
 		return nil, errors.New("error")
 	})
@@ -248,7 +248,7 @@ func TestSQLUpdateTrainAlarm(t *testing.T) {
 	assert.Nil(t, err)
 
 	running = false
-	err = db.UpdateTrainAlarm(ctx, alarm.GetID(), func(alarm *trainalarm.TrainAlarm) (*trainalarm.TrainAlarm, error) {
+	err = db.UpdateTrainAlarm(ctx, alarm.GetID(), func(alarm *domain.TrainAlarm) (*domain.TrainAlarm, error) {
 		running = true
 		alarm.SetSuccessfulNotification()
 		return alarm, nil
